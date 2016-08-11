@@ -1,0 +1,9 @@
+# standard conf
+alias me="echo $USER"
+alias WORKSPACE="cd ~/workspace"
+
+# git alias
+alias gt="git tree"
+alias gs="git status"
+alias gf="git fetch"
+alias gu="git update"
