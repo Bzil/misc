@@ -1,0 +1,14 @@
+#!/bin/bash
+
+history -c
+history -w
+
+if [ -e "$HOME/.bash_history" ]; then
+	cat /dev/null > $HOME/.bash_history && history -c
+fi
+
+if [ -e "$HOME/.zsh_history" ]; then
+	cat /dev/null > $HOME/.zsh_history && history -c
+fi
+
+exit
