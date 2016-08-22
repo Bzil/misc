@@ -7,4 +7,4 @@
 ```bash
 if [ -f $HOME/.functions ]; then
     . $HOME/.functions
-fi```
+fi
