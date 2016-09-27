@@ -1,0 +1,9 @@
+#!/bin/bash
+
+stop_local_ftp() {
+	sudo -s launchctl unload -w /System/Library/LaunchDaemons/ftp.plist
+}
+
+start_local_ftp() {
+	sudo -s launchctl load -w /System/Library/LaunchDaemons/ftp.plist
+}
