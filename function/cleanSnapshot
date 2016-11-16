@@ -1,0 +1,7 @@
+#!/bin/bash
+# Clean all snapshot from a secific date, by default 1 day
+# usage ./cleanSnapshot <date?>
+
+DATE=${1:-1}
+
+find $HOME -type f -mtime +$DATE -iname "*SNAPSHOT*" -exec rm -fr {} \;
