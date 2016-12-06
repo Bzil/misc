@@ -7,6 +7,11 @@
 		</encoder>
 	</appender>
 
+	<!-- hibernate querry config
+	<logger name="org.hibernate.SQL" level="DEBUG" />    
+	<logger name="org.hibernate.type" level="TRACE" />
+	-->
+	
 	<logger name="PROJECT_NAME" level="info"/>
 
 	<root level="info">
