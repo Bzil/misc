@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration>
-<configuration>
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>[ %highlight(%-6level)] %d{HH:mm:ss.SSS} [%green(%-40.50logger{36})] - %msg%n</pattern>
+<configuration scan="true" scanPeriod="10 seconds">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+			<pattern>[ %highlight(%-6level)] %d{HH:mm:ss.SSS} [%X{URI}][u:%X{userId}][sh:%X{shopUuid}] [%green(%-40.50logger).%M] [L.%L] - %msg%n</pattern>
 		</encoder>
-	</appender>
+    </appender>
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
 
-	<!-- hibernate querry config
-	<logger name="org.hibernate.SQL" level="DEBUG" />    
+	<logger name="your.domain" level="DEBUG"/>
+
+	<logger name="org.springframework" level="INFO"/>
+	<logger name="org.hibernate" level="INFO"/>
+	<logger name="org.dozer" level="WARN"/>
+
+	<!-- Custom config -->
+
+    <!-- hibernate querry config
+	<logger name="org.hibernate.SQL" level="TRACE" />    
 	<logger name="org.hibernate.type" level="TRACE" />
 	-->
-	
-	<logger name="PROJECT_NAME" level="info"/>
 
-	<root level="info">
-		<appender-ref ref="STDOUT"/>
-	</root>
+	<!--
+		<logger name="org.springframework.jdbc.core.JdbcTemplate" level="INFO"/>
+	 -->
 </configuration>
