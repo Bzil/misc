@@ -1,5 +1,6 @@
 #!/bin/bash
 # ./watcher <cmd>
+# ./watcher "<cmd> <opt>" 
 
 
 watch -d -n 1 $1
