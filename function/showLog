@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ -f $1 ] ; then 
+	tail -1000f $1
+else
+ echo "'$1' is not a valid file"
+fi
