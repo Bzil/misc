@@ -1,8 +1,0 @@
-#!/bin/bash
-# ./fileEncoding <file>
-
-if [[ -f $1 ]]; then
-	file -Ib $1
-else
-	echo "'$1' is not a file"
-fi
