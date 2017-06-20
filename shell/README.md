@@ -1,6 +1,21 @@
 Some uselfull alias and function in bash
 ----------------------------------------
 
+Some aliases 
+```bash
+# standard conf
+alias me="echo $USER"
+alias WORKSPACE="cd ~/workspace"
+
+# git alias
+alias gt="git tree"
+alias gs="git status"
+alias gf="git fetch"
+alias gu="git update"
+alias gb="git branch"
+alias gsw="git swich"
+```
+
 Change directory
 ```bash
 function changeDirectory {
@@ -29,23 +44,23 @@ Extract archive
 ```bash
 function extract {
 	if [ -f $1 ] ; then 
-    case $1 in 
-        *.tar.bz2)   tar xjf $1     ;; 
-        *.tar.gz)    tar xzf $1     ;; 
-        *.bz2)       bunzip2 $1     ;; 
-        *.rar)       unrar e $1     ;; 
-        *.gz)        gunzip $1      ;; 
-        *.tar)       tar xf $1      ;; 
-        *.tbz2)      tar xjf $1     ;; 
-        *.tgz)       tar xzf $1     ;; 
-        *.zip)       unzip $1       ;; 
-        *.Z)         uncompress $1  ;; 
-        *.7z)        7z x $1        ;; 
-        *)     echo "'$1' cannot be extracted via extract()" ;; 
-    esac 
-else 
-         echo "'$1' is not a valid file" 
-fi 
+	    case $1 in 
+	        *.tar.bz2)   tar xjf $1     ;; 
+	        *.tar.gz)    tar xzf $1     ;; 
+	        *.bz2)       bunzip2 $1     ;; 
+	        *.rar)       unrar e $1     ;; 
+	        *.gz)        gunzip $1      ;; 
+	        *.tar)       tar xf $1      ;; 
+	        *.tbz2)      tar xjf $1     ;; 
+	        *.tgz)       tar xzf $1     ;; 
+	        *.zip)       unzip $1       ;; 
+	        *.Z)         uncompress $1  ;; 
+	        *.7z)        7z x $1        ;; 
+	        *)     echo "'$1' cannot be extracted via extract()" ;; 
+	    esac 
+	else 
+	         echo "'$1' is not a valid file" 
+	fi 
 }
 ```
 

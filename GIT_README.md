@@ -1,3 +1,9 @@
+Some usefull custom git cmd 
+---------------------------
+
+Add it in .gitconfig file
+
+```bash
 [alias]
 	# Show all commit tree 
 	tree = log --graph --decorate --pretty=oneline --abbrev-commit --all
@@ -19,3 +25,4 @@
        diff = auto
        interactive = auto
        status = auto
+```
