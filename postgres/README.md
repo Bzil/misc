@@ -58,3 +58,10 @@ SELECT
 FROM pg_catalog.pg_statio_user_tables
 ORDER BY pg_total_relation_size(relid) DESC;
 ```
+
+See active request on db 
+```sql
+SELECT *
+FROM pg_stat_activity
+WHERE datname = 'NAME'
+``
