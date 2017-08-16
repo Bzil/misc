@@ -159,3 +159,14 @@ Watch on cmd
 ```bash
 watch -d -n 1 $1
 ```
+List metadata from file 
+```bash
+mdls <file>
+```
+
+Edit picture metadata
+```
+xattr -w com.apple.metadata:<datatype> <data> <file>
+#Ex 
+xattr -w com.apple.metadata:kMDItemWhereFroms <data> <file>
+``` 
