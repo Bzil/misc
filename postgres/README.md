@@ -69,7 +69,7 @@ WHERE datname = 'NAME'
 Some configuration and tip to analyze querries
 ----------------------------------------------
 
-Configure postgres to log every query in order to avoid pollution
+Configure postgres to log every query
 ```
 log_min_duration_statement = 0
 log_line_prefix = '%t [%p]: [%l-1] '
@@ -86,12 +86,12 @@ log_statement = 'none'
 # lc_messages='C'
 ```
 
-Clean log on mac os
+Clean log on postgres install with brew (OSx)
 ```bash
 echo "" > /usr/local/var/log/postgres.log
 ```
 
-Run pgbadger
+Run pgbadger, more information see : https://github.com/dalibo/pgbadger
 ```bash
 pgbadger /path/to/my/postgres-log-file.log
 ```
