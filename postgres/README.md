@@ -65,3 +65,33 @@ SELECT *
 FROM pg_stat_activity
 WHERE datname = 'NAME'
 ```
+
+Some configuration and tip to analyze querries
+----------------------------------------------
+
+Configure postgres to log every query in order to avoid pollution
+```
+log_min_duration_statement = 0
+log_line_prefix = '%t [%p]: [%l-1] '
+log_checkpoints = on
+log_connections = on
+log_disconnections = on
+log_lock_waits = on
+log_temp_files = 0
+log_autovacuum_min_duration = 0
+log_error_verbosity = default
+log_statement = 'none'
+
+# if psql is not in english
+# lc_messages='C'
+```
+
+Clean log on mac os
+```bash
+echo "" > /usr/local/var/log/postgres.log
+```
+
+Run pgbadger
+```bash
+pgbadger /path/to/my/postgres-log-file.log
+```
