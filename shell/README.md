@@ -1,5 +1,5 @@
-Some uselfull alias and function in bash
-----------------------------------------
+Some uselfull alias and function in shell
+-----------------------------------------
 
 Some aliases 
 ```bash
@@ -159,14 +159,20 @@ Watch on cmd
 ```bash
 watch -d -n 1 $1
 ```
+
 List metadata from file 
 ```bash
 mdls <file>
 ```
 
 Edit picture metadata
-```
+```bash
 xattr -w com.apple.metadata:<datatype> <data> <file>
 #Ex 
 xattr -w com.apple.metadata:kMDItemWhereFroms <data> <file>
 ``` 
+
+Time to first byte
+```bash
+curl -w "Connect time: %{time_connect} Time to first byte: %{time_starttransfer} Total time: %{time_total}" <OPTION> <URL>
+```
