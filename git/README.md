@@ -6,8 +6,14 @@ Add it in .gitconfig file
 ```bash
 [alias]
 	# Show all commit tree 
-	tree = log --graph --decorate --pretty=oneline --abbrev-commit --all
+	tree = log --all --graph --decorate --pretty=oneline --abbrev-commit 
+	otherTree = log --all --graph --color  --format='%C(yellow)%h%Creset %cr -%C(auto)%d%Creset %s - %C(blue)%cn%Creset'
 	
+	# Show branch commit
+	bTree = log --all --graph --decorate --pretty=oneline --abbrev-commit 
+	otherBTree = log --all --graph --color  --format='%C(yellow)%h%Creset %cr -%C(auto)%d%Creset %s - %C(blue)%cn%Creset'
+	
+
 	# Update project without merge, remove delete branches
 	update = "!u() { git fetch && git fetch -p -t; }; u"
 	

@@ -1,5 +1,5 @@
-Some usefull postgres 9.6 querries
-----------------------------------
+Some usefull postgres querries
+------------------------------
 
 Get the last vacuum date for specific table
 
@@ -48,7 +48,6 @@ FROM pg_class c
 WHERE relkind = 'r' AND relname = 'TABLE_NAME';
 ```
 
-
 See all table size
 ```sql
 SELECT
@@ -66,7 +65,31 @@ FROM pg_stat_activity
 WHERE datname = 'NAME'
 ```
 
-Some configuration and tip to analyze querries
+See all running querries
+```sql
+SELECT 
+  pid,
+  age(query_start, clock_timestamp()),
+  usename,
+  query 
+FROM pg_stat_activity 
+WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' 
+ORDER BY query_start desc;
+
+```
+
+See all related data to table
+```sql
+ SELECT
+ ctid, -- physical location
+ xmin, -- insertion transaction
+ xmax, -- deletion transaction
+ * 
+ FROM <table>;
+
+```
+
+Some configuration and tip to analyze queries
 ----------------------------------------------
 
 Configure postgres to log every query
@@ -84,6 +107,12 @@ log_statement = 'none'
 
 # if psql is not in english
 # lc_messages='C'
+```
+
+Increase query size in activity table
+```
+track_activity_query_size = 16384
+
 ```
 
 Clean log on postgres install with brew (OSx)
