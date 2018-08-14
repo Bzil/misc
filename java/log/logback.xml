@@ -12,18 +12,25 @@
 
 	<logger name="your.domain" level="DEBUG"/>
 
+	<!-- Spring -->
 	<logger name="org.springframework" level="INFO"/>
+	<logger name="org.springframework.boot.actuate" level="OFF"/>
+	<!-- hibernate -->
 	<logger name="org.hibernate" level="INFO"/>
+	<!-- dozer -->
 	<logger name="org.dozer" level="WARN"/>
 
-	<!-- Custom config -->
+	<!-- ES -->
+    <logger name="org.elasticsearch" level="OFF"/>
+    <logger name="org.elasticsearch.client" level="OFF"/>
 
-    <!-- hibernate querry config
+	<!-- Custom database  config -->
+    <!-- hibernate query config -->
 	<logger name="org.hibernate.SQL" level="TRACE" />    
 	<logger name="org.hibernate.type" level="TRACE" />
-	-->
+	<!-- jooq config -->
+	<logger name="org.jooq" level="DEBUG"/>
+	<!-- spring jdbc -->
+	<logger name="org.springframework.jdbc.core.JdbcTemplate" level="INFO"/>
 
-	<!--
-		<logger name="org.springframework.jdbc.core.JdbcTemplate" level="INFO"/>
-	 -->
 </configuration>

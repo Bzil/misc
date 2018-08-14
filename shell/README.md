@@ -188,3 +188,8 @@ Time to first byte
 ```bash
 curl -w "Connect time: %{time_connect} Time to first byte: %{time_starttransfer} Total time: %{time_total}" <OPTION> <URL>
 ```
+
+Get CPU use by process
+```bash
+ps -lf -o "tid,%cpu"
+``` 
