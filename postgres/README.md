@@ -142,7 +142,6 @@ log_statement = 'none'
 Increase query size in activity table
 ```
 track_activity_query_size = 16384
-
 ```
 
 Clean log on postgres install with brew (OSx)
