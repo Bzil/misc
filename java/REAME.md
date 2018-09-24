@@ -17,7 +17,7 @@ Some usefull cmd
 
 List all java process
 ```bash
-jsp
+jps
 ```
 
 Generate a heap dump
