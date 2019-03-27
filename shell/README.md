@@ -193,3 +193,10 @@ Get CPU use by process
 ```bash
 ps -lf -o "tid,%cpu"
 ``` 
+
+Get my ip
+```bash
+function my_ip {
+  ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}'
+}
+```

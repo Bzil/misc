@@ -160,3 +160,10 @@ Run pgbadger, more information see : https://github.com/dalibo/pgbadger
 ```bash
 pgbadger /path/to/my/postgres-log-file.log
 ```
+
+Gel my ip
+```bash
+function my_ip {
+  ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}'
+}
+```
