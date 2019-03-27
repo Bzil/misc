@@ -117,7 +117,14 @@ FROM pg_catalog.pg_locks blocked_locks
 WHERE NOT blocked_locks.granted;
 ```
 
+Export data to csv file 
+```sql
 
+SET client_encoding TO 'UTF8';
+
+\COPY (SELECT * FROM <TABLE_NAME> ) to 'export.csv' WITH CSV HEADER DELIMITER ';'
+
+```
 
 Some configuration and tip to analyze queries
 ----------------------------------------------
