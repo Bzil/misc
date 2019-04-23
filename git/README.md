@@ -1,9 +1,13 @@
-Some usefull custom git cmd 
----------------------------
+Some usefull custom git config 
+------------------------------
 
 Add it in .gitconfig file
 
 ```bash
+[user]
+	name = Bzil
+[core]
+	excludesfile = $HOME/.gitignore_global
 [alias]
 	# Show all commit tree 
 	tree = log --all --graph --decorate --pretty=oneline --abbrev-commit 
@@ -31,4 +35,7 @@ Add it in .gitconfig file
        diff = auto
        interactive = auto
        status = auto
+
+[push]
+	default = simple
 ```
