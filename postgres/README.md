@@ -1,6 +1,16 @@
 Some usefull postgres querries
 ------------------------------
 
+Custom postgres console
+ add in `$HOME/.psqlrc`  
+```bash
+\timing on
+\pset linestyle unicode 
+\pset border 2
+\setenv PAGER 'pspg --no-mouse -bX --no-commandbar --no-topbar'
+\set HISTSIZE 100000
+```
+
 Get the last vacuum date for specific table
 
 ```sql
