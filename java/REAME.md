@@ -29,3 +29,8 @@ Generate a thread dump
 ```bash
 jstack -l <JAVA_PID> > threaddump
 ```
+
+Analyze heapdump on MAT, on `org.hibernate.internal.SessionFactoryImpl` problem 
+```sql
+SELECT l.query.toString() FROM INSTANCEOF org.hibernate.engine.query.spi.QueryPlanCache$HQLQueryPlanKey l 
+``` 
