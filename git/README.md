@@ -38,4 +38,7 @@ Add it in .gitconfig file
 
 [push]
 	default = simple
+
+[pull]
+	rebase = true
 ```
