@@ -1,17 +1,6 @@
-Some usefull postgres querries
-------------------------------
+# Some usefull postgres querries
 
-Custom postgres console
- add in `$HOME/.psqlrc`  
-```bash
-\timing on
-\pset linestyle unicode 
-\pset border 2
-\setenv PAGER 'pspg --no-mouse -bX --no-commandbar --no-topbar'
-\set HISTSIZE 100000
-```
-
-Get the last vacuum date for specific table
+##  Get the last vacuum date for specific table
 
 ```sql
 SELECT
@@ -24,7 +13,7 @@ FROM pg_stat_user_tables
 WHERE relname = 'NAME';
 ```
 
-Get lock on table
+## Get lock on table
 ```sql
 SELECT
   clock_timestamp(),
@@ -43,7 +32,7 @@ FROM pg_locks
 WHERE relname !~ '^pg_' AND relname <> 'active_locks';
 ```
 
-See real size on disk for specific table
+## See real size on disk for specific table
 ```sql
 SELECT
   c.oid,
@@ -58,7 +47,7 @@ FROM pg_class c
 WHERE relkind = 'r' AND relname = 'TABLE_NAME';
 ```
 
-See all table size
+## See all table size
 ```sql
 SELECT
   relname                                                                 AS "Table",
@@ -68,14 +57,14 @@ FROM pg_catalog.pg_statio_user_tables
 ORDER BY pg_total_relation_size(relid) DESC;
 ```
 
-See all active request on db 
+## See all active request on db 
 ```sql
 SELECT *
 FROM pg_stat_activity
 WHERE datname = 'NAME'
 ```
 
-See all running querries
+## See all running querries
 ```sql
 SELECT 
   pid,
@@ -88,7 +77,7 @@ ORDER BY query_start desc;
 
 ```
 
-See all related data to table
+## See all related data to table
 ```sql
  SELECT
  ctid, -- physical location
@@ -99,7 +88,7 @@ See all related data to table
 
 ```
 
-See combinaison of blocked and blocking activity
+## See combinaison of blocked and blocking activity
 ```sql
 SELECT
   blocked_locks.pid         AS blocked_pid,
@@ -127,7 +116,7 @@ FROM pg_catalog.pg_locks blocked_locks
 WHERE NOT blocked_locks.granted;
 ```
 
-Export data to csv file 
+## Export data to csv file 
 ```sql
 
 SET client_encoding TO 'UTF8';
@@ -136,10 +125,40 @@ SET client_encoding TO 'UTF8';
 
 ```
 
-Some configuration and tip to analyze queries
-----------------------------------------------
+## Change template for db creation
+```sql
+-- remove template flag to allow deletion 
+ALTER database template1 is_template=false;
 
-Configure postgres to log every query
+DROP database template1;
+
+-- define your own custom config
+CREATE DATABASE template1
+WITH OWNER = postgres
+   ENCODING = 'UTF8'
+   TABLESPACE = pg_default
+   LC_COLLATE = 'en_US.UTF-8'
+   LC_CTYPE = 'en_US.UTF-8'
+   CONNECTION LIMIT = -1
+   TEMPLATE template0;
+
+-- define database as template
+ALTER database template1 is_template=true;
+```
+
+# Some configuration and tip to analyze queries
+
+## Custom postgres console
+ add in `$HOME/.psqlrc`  
+```bash
+\timing on
+\pset linestyle unicode 
+\pset border 2
+\setenv PAGER 'pspg --no-mouse -bX --no-commandbar --no-topbar'
+\set HISTSIZE 100000
+```
+
+### Configure postgres to log every query
 ```
 log_min_duration_statement = 0
 log_line_prefix = '%t [%p]: [%l-1] '
@@ -156,17 +175,17 @@ log_statement = 'none'
 # lc_messages='C'
 ```
 
-Increase query size in activity table
+### Increase query size in activity table
 ```
 track_activity_query_size = 16384
 ```
 
-Clean log on postgres install with brew (OSx)
+### Clean log on postgres install with brew (OSx)
 ```bash
 echo "" > /usr/local/var/log/postgres.log
 ```
 
-Run pgbadger, more information see : https://github.com/dalibo/pgbadger
+### Run pgbadger, more information see : https://github.com/dalibo/pgbadger
 ```bash
 pgbadger /path/to/my/postgres-log-file.log
 ```

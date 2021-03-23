@@ -1,31 +1,26 @@
 # My ES sheet 
 
-Get all alias
--------------
+## Get all alias
 ```bash
 curl --user ${USER}:${PASSWORD} -X GET "${URL}:${PORT}/_cat/aliases?v"
 ``` 
 
-Get all indexes
----------------
+## Get all indexes
 ```bash
 curl --user ${USER}:${PASSWORD} -X GET "${URL}:${PORT}/_cat/indices?v"
 ```
 
-Get settings for one indices
-----------------------------
+## Get settings for one indices
 ```bash
 curl --user ${USER}:${PASSWORD} -X GET "${URL}:${PORT}/my-index/_settings"
 ```
 
-Get mapping for one indices
-----------------------------
+## Get mapping for one indices
 ```bash
 curl --user ${USER}:${PASSWORD} -X GET "${URL}:${PORT}/my-index/_mappings"
 ```
 
-Create index with mapping and setting
--------------------------------------
+## Create index with mapping and setting
 ```bash
 curl --user ${USER}:${PASSWORD} -X PUT "${URL}:${PORT}/INDEX-NAME" -H 'Content-Type: application/json' -d'
 {
@@ -39,14 +34,12 @@ curl --user ${USER}:${PASSWORD} -X PUT "${URL}:${PORT}/INDEX-NAME" -H 'Content-T
 '
 ```
 
-Delete Index
-------------
+## Delete Index
 ```bash
 curl --user ${USER}:${PASSWORD} -X DELETE "${URL}:${PORT}/INDEX-NAME"
 ```
 
-Re-index 
---------
+## Re-index 
 ```bash
 curl --user ${USER}:${PASSWORD} -X POST "${URL}:${PORT}/_reindex" -H 'Content-Type: application/json' -d'
 {
@@ -60,8 +53,7 @@ curl --user ${USER}:${PASSWORD} -X POST "${URL}:${PORT}/_reindex" -H 'Content-Ty
 '
 ```
 
-Async re-index
---------------
+## Async re-index
 ```bash
 curl --user ${USER}:${PASSWORD} -X POST "${URL}:${PORT}/_reindex?wait_for_completion=false" -H 'Content-Type: application/json' -d'
 {
@@ -75,14 +67,12 @@ curl --user ${USER}:${PASSWORD} -X POST "${URL}:${PORT}/_reindex?wait_for_comple
 '
 ```
 
-Get task information
---------------------
+## Get task information
 ```bash
 curl --user ${USER}:${PASSWORD} -X POST "${URL}:${PORT}/_tasks/${ID}"
 ```
 
-Add alias to index
-------------------
+## Add alias to index
 ```bash
 curl --user ${USER}:${PASSWORD} -X POST "${URL}:${PORT}/_aliases" -H 'Content-Type: application/json' -d'
 {

@@ -1,36 +1,34 @@
-Some usefull parameters
------------------------
+# Some usefull parameters
 
-Unlock JMC for profiling
+### Unlock JMC for profiling
 ```
 -XX:+UnlockCommercialFeatures
 -XX:+FlightRecorder
 ```
 
-Generate heap dump on OOM error
+###Generate heap dump on OOM error
 ```
 -XX:+HeapDumpOnOutOfMemoryError
 ```
 
-Some usefull cmd
-----------------
+# Some usefull cmd
 
-List all java process
+### List all java process
 ```bash
 jps
 ```
 
-Generate a heap dump
+### Generate a heap dump
 ```bash
 jmap -dump:format=b,file=heapdump.hprof <JAVA_PID>
 ```
 
-Generate a thread dump
+### Generate a thread dump
 ```bash
 jstack -l <JAVA_PID> > threaddump
 ```
 
-Analyze heapdump on MAT, on `org.hibernate.internal.SessionFactoryImpl` problem 
+### Analyze heapdump on MAT, on `org.hibernate.internal.SessionFactoryImpl` problem 
 ```sql
 SELECT l.query.toString() FROM INSTANCEOF org.hibernate.engine.query.spi.QueryPlanCache$HQLQueryPlanKey l 
 ``` 
