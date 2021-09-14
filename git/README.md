@@ -1,7 +1,6 @@
-Some usefull custom git config 
-------------------------------
+# Some usefull custom git config 
 
-Add it in .gitconfig file
+### Add it in .gitconfig file
 
 ```bash
 [user]
