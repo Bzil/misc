@@ -28,9 +28,15 @@
     <!-- hibernate query config -->
 	<logger name="org.hibernate.SQL" level="TRACE" />    
 	<logger name="org.hibernate.type" level="TRACE" />
+	<logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="INFO" />
 	<!-- jooq config -->
 	<logger name="org.jooq" level="DEBUG"/>
 	<!-- spring jdbc -->
 	<logger name="org.springframework.jdbc.core.JdbcTemplate" level="INFO"/>
+	<!-- jooq -->
+	<logger name="org.jooq" level="OFF"/> <!-- DEBUG -->
+	<!-- spring + jdbc template -->
+	<logger name="org.springframework.jdbc.core.JdbcTemplate" level="DEBUG"/> <!-- DEBUG -->
+	<logger name="org.springframework.jdbc.core.StatementCreatorUtils" level="TRACE"/> <!-- TRACE -->
 
 </configuration>
