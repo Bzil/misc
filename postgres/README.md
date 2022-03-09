@@ -88,7 +88,7 @@ ORDER BY query_start desc;
 
 ```
 
-## See running queries 
+## See long running queries 
 ```sql
 SELECT now() - xact_start AS duration,
     pid,
@@ -97,8 +97,18 @@ SELECT now() - xact_start AS duration,
     left(query, 100)
 FROM pg_stat_activity
 WHERE state <> 'idle'
-ORDER BY query_start ASC
+ORDER BY 1 DESC, 3 ASC
 LIMIT 10;
+```
+
+# See index usage stat on tabled
+```sql 
+SELECT indexrelname,
+    idx_scan,
+    idx_tup_read,
+    idx_tup_fetch
+FROM pg_stat_user_indexes
+WHERE schemaname = 'SCHEMA' and relname = 'TABLE_NAME';
 ```
 
 ## See combinaison of blocked and blocking activity
