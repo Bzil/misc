@@ -88,6 +88,19 @@ ORDER BY query_start desc;
 
 ```
 
+## See running queries 
+```sql
+SELECT now() - xact_start AS duration,
+    pid,
+    query_start,
+    application_name,
+    left(query, 100)
+FROM pg_stat_activity
+WHERE state <> 'idle'
+ORDER BY query_start ASC
+LIMIT 10;
+```
+
 ## See combinaison of blocked and blocking activity
 ```sql
 SELECT
