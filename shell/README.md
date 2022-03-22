@@ -48,8 +48,15 @@ function cleadOldPackage {
 
 Clean all docker images
 ```bash
-docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
-docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
+function clean_docker {
+    docker rm -f $(docker ps -a -q) 
+    docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
+    docker rmi -f $(docker images -q)
+	docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
+    docker image prune -a -f
+	docker system prune -a
+	docker volume prune
+}
 ```
 
 Extract archive
