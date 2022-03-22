@@ -8,7 +8,7 @@
 if [ -f $HOME/.functions ]; then
     . $HOME/.functions
 fi
-
+```
 
 Some uselfull alias and function in shell
 -----------------------------------------
@@ -52,10 +52,10 @@ function clean_docker {
     docker rm -f $(docker ps -a -q) 
     docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
     docker rmi -f $(docker images -q)
-	docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
+    docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
     docker image prune -a -f
-	docker system prune -a
-	docker volume prune
+    docker system prune -a
+    docker volume prune
 }
 ```
 
