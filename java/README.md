@@ -32,3 +32,11 @@ jstack -l <JAVA_PID> > threaddump
 ```sql
 SELECT l.query.toString() FROM INSTANCEOF org.hibernate.engine.query.spi.QueryPlanCache$HQLQueryPlanKey l 
 ``` 
+
+### Clean SNAPSHOT
+```bash
+function cleanSnapshot() {
+    DATE=${1:-1}
+    find $HOME -type f -mtime +$DATE -iname "*SNAPSHOT*" -exec rm -fr {} \;
+}
+```
