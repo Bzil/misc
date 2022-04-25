@@ -4,6 +4,7 @@
 
 ```sql
 SELECT
+  schemaname,
   relname,
   last_vacuum,
   last_autovacuum,
@@ -50,6 +51,7 @@ WHERE relkind = 'r' AND relname = 'TABLE_NAME';
 ## See all table size
 ```sql
 SELECT
+  schemaname                                                              AS "Schema",
   relname                                                                 AS "Table",
   pg_size_pretty(pg_total_relation_size(relid))                           AS "Size",
   pg_size_pretty(pg_total_relation_size(relid) - pg_relation_size(relid)) AS "External Size"
