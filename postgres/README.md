@@ -76,8 +76,22 @@ SELECT
 FROM pg_stat_activity 
 WHERE query != '<IDLE>' AND query NOT ILIKE '%pg_stat_activity%' 
 ORDER BY query_start desc;
-
 ```
+
+```sql
+SELECT pid,
+    usename AS login,
+    application_name AS app,
+    to_char(query_start, 'HH24:MI:SS') AS start,
+    date_trunc('second', (now() - query_start)) AS duration,
+    wait_event_type || '/' || wait_event AS waiting,
+    state,
+    left(query, 100) AS query
+FROM pg_stat_activity
+WHERE state != 'idle'
+ORDER BY query_start
+LIMIT 30;
+
 
 ## See all related data to table
 ```sql
