@@ -91,7 +91,7 @@ FROM pg_stat_activity
 WHERE state != 'idle'
 ORDER BY query_start
 LIMIT 30;
-
+```
 
 ## See all related data to table
 ```sql
@@ -101,7 +101,6 @@ LIMIT 30;
  xmax, -- deletion transaction
  * 
  FROM <table>;
-
 ```
 
 ## See long running queries 
