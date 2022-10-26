@@ -86,9 +86,26 @@ SELECT pid,
     date_trunc('second', (now() - query_start)) AS duration,
     wait_event_type || '/' || wait_event AS waiting,
     state,
-    left(query, 100) AS query
+    left(REPLACE(query, E'\n', ''), 2000) AS query
 FROM pg_stat_activity
 WHERE state != 'idle'
+ORDER BY query_start
+LIMIT 30;
+```
+
+## Kill queries matching app name
+```sql
+SELECT 
+   pid, -- pg_terminate_backend(pid),
+   usename as login,
+   application_name as app,
+   to_char(query_start, 'HH24:MI:SS') as start,
+   date_trunc('second', (now()-query_start)) as duration,
+   wait_event_type || '/' || wait_event as waiting,
+   state,
+   left(REPLACE(query, E'\n', ''), 200) as query
+FROM pg_stat_activity
+WHERE state != 'idle' and application_name LIKE 'NAME%'
 ORDER BY query_start
 LIMIT 30;
 ```
@@ -109,7 +126,7 @@ SELECT now() - xact_start AS duration,
     pid,
     query_start,
     application_name,
-    left(query, 100)
+    left(REPLACE(query, E'\n', ''), 2000)
 FROM pg_stat_activity
 WHERE state <> 'idle'
 ORDER BY 1 DESC, 3 ASC
