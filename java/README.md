@@ -40,3 +40,8 @@ function cleanSnapshot() {
     find $HOME -type f -mtime +$DATE -iname "*SNAPSHOT*" -exec rm -fr {} \;
 }
 ```
+
+### Add [logback](log/logback.xml) option
+```
+-Dlogging.config=$LOG_PATH/log/logback.xml
+```
