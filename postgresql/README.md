@@ -326,6 +326,86 @@ FROM pg_catalog.pg_locks blocked_locks
 WHERE NOT blocked_locks.granted;
 ```
 
+## List all fk not indexed
+```sql
+WITH  fk_list AS (
+    SELECT pg_constraint.oid AS fkoid, conrelid, confrelid AS parentid,
+           conname, relname, nspname,confupdtype,confdeltype,
+           conkey AS key_cols
+    FROM pg_constraint
+             JOIN pg_class ON conrelid = pg_class.oid
+             JOIN pg_namespace ON pg_class.relnamespace = pg_namespace.oid
+    WHERE contype = 'f'
+),
+      fk_attributes AS (
+          SELECT fkoid, conrelid, attname, attnum
+          FROM fk_list
+                   JOIN pg_attribute
+                        ON conrelid = attrelid
+                            AND attnum = ANY( key_cols )
+          ORDER BY fkoid, attnum
+      ),
+      fk_cols_list AS (
+          SELECT fkoid, array_agg(attname) AS cols_list
+          FROM fk_attributes
+          GROUP BY fkoid
+      ),
+      index_list AS (
+          SELECT indexrelid AS indexid,
+                 pg_class.relname AS indexname,
+                 indrelid,
+                 indkey,
+                 indpred IS NOT NULL AS has_predicate,
+                 pg_get_indexdef(indexrelid) AS indexdef
+          FROM pg_index
+                   JOIN pg_class ON indexrelid = pg_class.oid
+          WHERE indisvalid
+      ),
+      fk_index_match AS (
+          SELECT fk_list.*,
+                 indexid,
+                 indexname,
+                 indkey::int[] AS indexatts,
+                 has_predicate,
+                 indexdef,
+                 array_length(key_cols, 1) AS fk_colcount,
+                 array_length(indkey,1) AS index_colcount,
+                 cols_list
+          FROM fk_list
+                   JOIN fk_cols_list USING (fkoid)
+                   LEFT OUTER JOIN index_list
+                                   ON conrelid = indrelid
+                                       AND (indkey::int2[])[0:(array_length(key_cols,1) -1)] @> key_cols
+
+      )
+        ,fk_perfect_match AS (
+    SELECT fkoid, has_predicate
+    FROM fk_index_match
+    WHERE NOT has_predicate
+      AND indexdef LIKE '%USING btree%'
+)
+        ,fk_index_check AS (
+    SELECT 'MISSING_INDEX' AS issue, *, 1 AS issue_sort
+    FROM fk_index_match
+    WHERE indexid IS NULL
+    UNION ALL
+    SELECT 'PARTIAL_INDEX' AS issue, *, 2 AS issue_sort
+    FROM fk_index_match
+    WHERE indexid IS NOT NULL
+      AND fkoid NOT IN (
+        SELECT fkoid
+        FROM fk_perfect_match)
+)
+SELECT nspname   AS schema_name,
+       relname   AS table_name,
+       conname   AS fk_name,
+       cols_list AS fk_columns,
+       issue     AS issue_type
+FROM fk_index_check
+ORDER BY issue_sort, table_name, fk_name;
+```
+
+
 ## Export data to csv file 
 ```sql
 
