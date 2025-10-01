@@ -23,7 +23,7 @@ SELECT pid,
     date_trunc('second', (now() - query_start)) AS query_duration,
     wait_event_type || '/' || wait_event AS waiting,
     state,
-    left(REPLACE(query, E'\n', ''), 200) AS query
+    left(REPLACE(query, E'\n', ' '), 200) AS query
 FROM pg_stat_activity
 WHERE state != 'idle'
 ORDER BY query_start
@@ -42,7 +42,7 @@ SELECT
     date_trunc('second', (now() - query_start)) AS query_duration,
     wait_event_type || '/' || wait_event as waiting,
     state,
-    left(REPLACE(query, E'\n', ''), 200) as query
+    left(REPLACE(query, E'\n', ' '), 200) as query
 FROM pg_stat_activity
 WHERE state != 'idle' and application_name LIKE 'NAME%'
 ORDER BY query_start
