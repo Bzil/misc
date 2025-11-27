@@ -1,0 +1,58 @@
+--------- HOME : display all available commands
+-- To rename as .psqlrc.menu in your home directory
+
+\echo 'Current Host Server Date Time : '`date` '\n'
+\echo 'Query Aliases Documentation:'
+\echo '\t:uptime\t\t\t-- Shows the time elapsed since the PostgreSQL server started.'
+\echo '\t:connections\t\t-- Lists the number of connections per user and database.'
+
+\echo '\nActivity and Transactions:'
+\echo '\t:activity\t\t-- Lists running queries with their duration and state. Ordered by query duration.'
+\echo '\t:activity_tx\t\t-- Shows transaction and query durations for each session. Ordered by tx duration.'
+\echo '\t:activity_backend\t-- Shows transaction and query durations for each session. Ordered by backend duration.'
+
+\echo '\nLocks and Blocking:'
+\echo '\t:blocking\t\t-- Displays blocked and blocking queries with their durations.'
+\echo '\t:locks\t\t\t-- Lists blocked and blocking users and their queries.'
+
+\echo '\nLong Queries:'
+\echo '\t:long_queries\t\t-- Lists queries ordered by transaction start time.'
+\echo '\t:long_queries_detailed\t-- Same as above, with query text and wait events.'
+\echo '\t:long_running_queries\t-- Shows queries running longer than 5 minutes.'
+
+\echo '\nBloat Queries:'
+\echo '\t:bloat_all\t\t-- Estimates table and index bloat and wasted space.'
+\echo '\t:bloat_mb\t\t-- Shows table bloat in MB and bloat ratio for the top 30 tables.'
+\echo '\t:bloat\t\t\t-- Lists tables with at least 100MB and 10% bloat, excluding staging tables.'
+
+\echo '\nFunctional:'
+\echo '\t:offer_imports\t\t-- Summarizes offer import activity by hour for the current day.'
+\echo '\t:offer_waiting_shop_imports\t-- Summarizes waiting shop imports by shopId'
+\echo '\t:async_task_running\t-- Lists running async tasks across all relevant schemas.'
+
+\echo '\nMiscellaneous:'
+\echo '\t:dbsize\t\t\t-- Displays the size of each database in a human-readable format.'
+\echo '\t:tablesize\t\t-- Shows the size of the largest 40 tables (excluding system schemas).'
+\echo '\t:cache_hit\t\t-- Shows index and table cache hit rates.'
+\echo '\t:index_size\t\t-- Lists index sizes.'
+\echo '\t:index_usage\t\t-- Shows index usage percentage and row counts.'
+\echo '\t:total_index_size\t-- Displays the total size of all indexes.'
+\echo '\t:unused_indexes\t\t-- Lists large, rarely used, non-unique indexes.'
+\echo '\t:excel\t\t\t-- Sets output format for easy copy-paste to Excel.'
+
+\echo '\nQuery Length Presets:'
+\echo '\t:query_short\t\t-- Set query preview length to 50 chars.'
+\echo '\t:query_long\t\t-- Set query preview length to 500 chars.'
+\echo '\t:query_full\t\t-- Set query preview length to 50,000 chars.'
+
+\echo '\nHelp:'
+\echo '\t\\?\t\t-- Help with psql commands'
+\echo '\t\\h\t\t-- Help with SQL commands'
+\echo '\t\\x\t\t-- Extended display'
+\echo '\t\\l\t\t-- List databases'
+\echo '\t\\d\t\t-- List tables'
+\echo '\t\\d table\t\t-- List columns for table'
+\echo '\t:clear\t\t-- Clear screen'
+\echo '\t:menu\t\t-- This help menu\n'
+
+-- Administration queries

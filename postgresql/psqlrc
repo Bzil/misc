@@ -1,0 +1,95 @@
+------------------------------------------------------------------------------
+-- psqlrc - PostgreSQL interactive terminal configuration file
+-- To rename as .psqlrc in your home directory
+------------------------------------------------------------------------------
+-- sources:
+-- https://github.com/heroku/heroku-pg-extras
+-- https://github.com/dlamotte/dotfiles/blob/master/psqlrc
+-- http://opensourcedbms.com/dbms/psqlrc-psql-startup-file-for-postgres/    --
+-- http://www.craigkerstiens.com/2013/02/21/more-out-of-psql/               --
+-- heavily inspired by killbulle
+-- https://github.com/Bzil/misc/blob/master/postgresql/README.md
+
+
+--------- CONFIGURATION ---------------
+-- set quiet mode during configuration.
+\set QUIET ON
+
+-- \x auto
+-- history file configuration
+\set HISTFILE ~/.psql_history :HOST - :USER -:DBNAME
+\set HISTSIZE 2000
+-- null character
+\pset null 'NULL'
+-- set the prompt to look awesome and use colors
+\set PROMPT1 '%[%033[31;1m%]%n%[%033[33;1m%]@%[%033[32;1m%]%[%033[0m%]%[%033[37;1m%]%/%[%033[0m%]%`date +" %H:%M:%S"` %#'
+\set PROMPT2 '%R>'
+-- keyword completion
+\set COMP_KEYWORD_CASE upper
+-- timing all queries
+\timing
+-- encoding
+\encoding unicode
+-- pretty lines when displaying query results
+-- \pset linestyle unicode
+-- \pset border 2
+-- wrap content to display all columns on the page
+-- \pset format wrapped
+-- exit the quiet mode when configuration is over
+\set QUIET OFF
+---------------------------------------
+
+
+--------- CUSTOM QUERIES -------------------
+
+\echo 'Current Host Server Date Time : '`date` '\n'
+
+\set uptime 'select now() - pg_postmaster_start_time() AS uptime;'
+\set connections 'SELECT usename, datname, COUNT(1) AS connections FROM pg_stat_activity GROUP BY usename, datname;'
+
+\set query_length 50
+
+-- Activity & Tx
+\set activity 'SELECT pid, application_name, usename, datname, date_trunc(''second'', age(now(),backend_start)) as running_for_backend, date_trunc(''second'', age(now(),xact_start)) as running_for_tx, date_trunc(''second'', age(now(),query_start)) as running_for_query, state,  wait_event_type || ''/'' || wait_event AS event, left(REPLACE(query, E''\n'', '' ''), :query_length) AS query FROM pg_stat_activity order by 7 desc NULLS LAST;'
+\set activity_tx 'SELECT pid, application_name, usename, datname, date_trunc(''second'', age(now(),backend_start)) as running_for_backend, date_trunc(''second'', age(now(),xact_start)) as running_for_tx, date_trunc(''second'', age(now(),query_start)) as running_for_query, state, wait_event_type || ''/'' || wait_event as event, left(REPLACE(query, E''\n'', '' ''), :query_length) AS query FROM pg_stat_activity order by 6 desc NULLS LAST;'
+\set activity_backend 'SELECT pid, application_name, usename, datname, date_trunc(''second'', age(now(),backend_start)) as running_for_backend, date_trunc(''second'', age(now(),xact_start)) as running_for_tx, date_trunc(''second'', age(now(),query_start)) as running_for_query, state,  wait_event_type || ''/'' || wait_event AS event, left(REPLACE(query, E''\n'', '' ''), :query_length) AS query FROM pg_stat_activity order by 5 desc NULLS LAST;'
+
+-- Locks and blocking queries
+
+
+\set blocking 'select  kl.pid as blocked_pid, left(REPLACE(ka.query, E''\n'', '' ''), :query_length) as blocked_statement,  date_trunc(''second'', now() - a.query_start) as blocked_duration,bl.pid as blocking_pid, left(REPLACE(a.query, E''\n'', '' ''), :query_length) as blocking_statement,  date_trunc(''second'', now() - ka.query_start) as blocking_duration from pg_catalog.pg_locks bl join pg_catalog.pg_stat_activity a on bl.pid = a.pid join pg_catalog.pg_locks kl join pg_catalog.pg_stat_activity ka on kl.pid = ka.pid on bl.transactionid = kl.transactionid and bl.pid != kl.pid where not bl.granted;'
+\set locks  'SELECT bl.pid AS blocked_pid, a.usename AS blocked_user, kl.pid AS blocking_pid, ka.usename AS blocking_user, left(REPLACE(a.query, E''\n'', '' ''), :query_length) AS blocked_statement FROM pg_catalog.pg_locks bl JOIN pg_catalog.pg_stat_activity a ON bl.pid = a.pid JOIN pg_catalog.pg_locks kl JOIN pg_catalog.pg_stat_activity ka ON kl.pid = ka.pid ON bl.transactionid = kl.transactionid AND bl.pid != kl.pid WHERE NOT bl.granted;'
+
+-- Long queries
+\set long_queries 'select application_name, date_trunc(''second'', query_start), date_trunc(''second'', xact_start), state, left(REPLACE(query, E''\n'', '' ''), :query_length) AS query from pg_stat_activity order by 3 asc;'
+\set long_queries_detailed 'select application_name, date_trunc(''second'',query_start), date_trunc(''second'',xact_start), left(REPLACE(query, E''\n'', '' ''), :query_length) AS query, state, wait_event_type, wait_event from pg_stat_activity order by 3 asc;'
+\set long_running_queries 'SELECT pid, application_name, date_trunc(''second'',now() - pg_stat_activity.query_start) AS duration, left(REPLACE(query, E''\n'', '' ''), :query_length) AS query FROM pg_stat_activity WHERE pg_stat_activity.query <> ''''::text AND now() - pg_stat_activity.query_start > interval ''5 minutes'' ORDER BY now() - pg_stat_activity.query_start DESC;'
+
+-- Bloat queries
+\set bloat_all 'SELECT tablename as table_name, ROUND(CASE WHEN otta=0 THEN 0.0 ELSE sml.relpages/otta::numeric END,1) AS table_bloat, CASE WHEN relpages < otta THEN ''0'' ELSE pg_size_pretty((bs*(sml.relpages-otta)::bigint)::bigint) END AS table_waste, iname as index_name, ROUND(CASE WHEN iotta=0 OR ipages=0 THEN 0.0 ELSE ipages/iotta::numeric END,1) AS index_bloat, CASE WHEN ipages < iotta THEN ''0'' ELSE pg_size_pretty((bs*(ipages-iotta))::bigint) END AS index_waste FROM ( SELECT schemaname, tablename, cc.reltuples, cc.relpages, bs, CEIL((cc.reltuples*((datahdr+ma- (CASE WHEN datahdr%ma=0 THEN ma ELSE datahdr%ma END))+nullhdr2+4))/(bs-20::float)) AS otta, COALESCE(c2.relname,''?'') AS iname, COALESCE(c2.reltuples,0) AS ituples, COALESCE(c2.relpages,0) AS ipages, COALESCE(CEIL((c2.reltuples*(datahdr-12))/(bs-20::float)),0) AS iotta FROM ( SELECT ma,bs,schemaname,tablename, (datawidth+(hdr+ma-(case when hdr%ma=0 THEN ma ELSE hdr%ma END)))::numeric AS datahdr, (maxfracsum*(nullhdr+ma-(case when nullhdr%ma=0 THEN ma ELSE nullhdr%ma END))) AS nullhdr2 FROM ( SELECT schemaname, tablename, hdr, ma, bs, SUM((1-null_frac)*avg_width) AS datawidth, MAX(null_frac) AS maxfracsum, hdr+( SELECT 1+count(*)/8 FROM pg_stats s2 WHERE null_frac<>0 AND s2.schemaname = s.schemaname AND s2.tablename = s.tablename) AS nullhdr FROM pg_stats s, ( SELECT (SELECT current_setting(''block_size'')::numeric) AS bs, CASE WHEN substring(v,12,3) IN (''8.0'',''8.1'',''8.2'') THEN 27 ELSE 23 END AS hdr, CASE WHEN v ~ ''mingw32'' THEN 8 ELSE 4 END AS ma FROM (SELECT version() AS v) AS foo) AS constants GROUP BY 1,2,3,4,5) AS foo) AS rs JOIN pg_class cc ON cc.relname = rs.tablename JOIN pg_namespace nn ON cc.relnamespace = nn.oid AND nn.nspname = rs.schemaname AND nn.nspname <> ''information_schema'' LEFT JOIN pg_index i ON indrelid = cc.oid LEFT JOIN pg_class c2 ON c2.oid = i.indexrelid) AS sml ORDER BY CASE WHEN relpages < otta THEN 0 ELSE bs*(sml.relpages-otta)::bigint END DESC;'
+\set bloat_mb 'SELECT schemaname, tblname, to_char((((tblpages-est_tblpages_ff)*bs)/(1024::NUMERIC^2))::INT, ''9G999G999G999'') AS bloat_mb,CASE WHEN tblpages = 0 THEN 0 WHEN tblpages - est_tblpages_ff > 0 THEN round((100 * (tblpages - est_tblpages_ff)/tblpages::float)::NUMERIC,2) ELSE 0 END AS bloat_ratio FROM ( SELECT ceil( reltuples / ( (bs-page_hdr)/tpl_size ) ) + ceil( toasttuples / 4 ) AS est_tblpages, ceil( reltuples / ( (bs-page_hdr)*fillfactor/(tpl_size*100) ) ) + ceil( toasttuples / 4 ) AS est_tblpages_ff, tblpages, fillfactor, bs, schemaname, tblname, heappages, toastpages FROM ( SELECT ( 4 + tpl_hdr_size + tpl_data_size + (2*ma)- CASE WHEN ceil(tpl_data_size)::int%ma = 0 THEN ma ELSE ceil(tpl_data_size)::int%ma END) AS tpl_size, (heappages + toastpages) AS tblpages, heappages, toastpages, reltuples, toasttuples, bs, page_hdr, schemaname, tblname, fillfactor FROM ( SELECT ns.nspname AS schemaname, tbl.relname AS tblname, tbl.reltuples, tbl.relpages AS heappages, coalesce(toast.relpages, 0) AS toastpages, coalesce(toast.reltuples, 0) AS toasttuples, coalesce(substring( array_to_string(tbl.reloptions, '' '') FROM ''%fillfactor=#"__#"%'' FOR ''#'')::smallint, 100) AS fillfactor, current_setting(''block_size'')::numeric AS bs, CASE WHEN version()~''mingw32'' OR version()~''64-bit|x86_64|ppc64|ia64|amd64'' THEN 8 ELSE 4 END AS ma, 24 AS page_hdr, 23 + CASE WHEN MAX(coalesce(null_frac,0)) > 0 THEN ( 7 + count(*) ) / 8 ELSE 0::int END AS tpl_hdr_size, sum( (1-coalesce(s.null_frac, 0)) * coalesce(s.avg_width, 1024) ) AS tpl_data_size FROM pg_attribute AS att JOIN pg_class AS tbl ON att.attrelid = tbl.oid JOIN pg_namespace AS ns ON ns.oid = tbl.relnamespace LEFT JOIN pg_stats AS s ON s.schemaname=ns.nspname AND s.tablename = tbl.relname AND s.inherited=false AND s.attname=att.attname LEFT JOIN pg_class AS toast ON tbl.reltoastrelid = toast.oid WHERE att.attnum > 0 AND NOT att.attisdropped AND tbl.relkind = ''r'' GROUP BY 1,2,3,4,5,6,7,8,9 ORDER BY 2 ) AS s) AS s2 ) AS s3 ORDER BY ((tblpages-est_tblpages_ff)*bs) desc,bloat_ratio desc LIMIT 30;'
+\set bloat 'SELECT  schemaname || ''.'' || tblname as table_fqdn,  (((tblpages-est_tblpages_ff)*bs)/(1024::NUMERIC^2))::INT AS bloat_mb,  CASE WHEN tblpages - est_tblpages_ff > 0    THEN round((100 * (tblpages - est_tblpages_ff)/tblpages::float)::NUMERIC,0)    ELSE 0  END AS bloat_ratio   FROM (     SELECT       ceil( reltuples / ( (bs-page_hdr)/tpl_size ) ) + ceil( toasttuples / 4 ) AS est_tblpages,       ceil( reltuples / ( (bs-page_hdr)*fillfactor/(tpl_size*100) ) ) + ceil( toasttuples / 4 ) AS est_tblpages_ff,       tblpages, fillfactor, bs, schemaname, tblname, heappages, toastpages     FROM (       SELECT         ( 4 + tpl_hdr_size + tpl_data_size + (2*ma)           - CASE WHEN ceil(tpl_data_size)::int%ma = 0 THEN ma ELSE ceil(tpl_data_size)::int%ma END         ) AS tpl_size, (heappages + toastpages) AS tblpages, heappages,         toastpages, reltuples, toasttuples, bs, page_hdr, schemaname, tblname, fillfactor       FROM (         SELECT          ns.nspname AS schemaname, tbl.relname AS tblname, tbl.reltuples,           tbl.relpages AS heappages, coalesce(toast.relpages, 0) AS toastpages,           coalesce(toast.reltuples, 0) AS toasttuples,           coalesce(substring(             array_to_string(tbl.reloptions, '' '')             FROM ''%fillfactor=#"__#"%'' FOR ''#'')::smallint, 100) AS fillfactor,           current_setting(''block_size'')::numeric AS bs,           CASE WHEN version()~''mingw32'' OR version()~''64-bit|x86_64|ppc64|ia64|amd64'' THEN 8 ELSE 4 END AS ma,           24 AS page_hdr,           23 + CASE WHEN MAX(coalesce(null_frac,0)) > 0 THEN ( 7 + count(*) ) / 8 ELSE 0::int END AS tpl_hdr_size,           sum( (1-coalesce(s.null_frac, 0)) * coalesce(s.avg_width, 1024) ) AS tpl_data_size         FROM pg_attribute AS att           JOIN pg_class AS tbl ON att.attrelid = tbl.oid           JOIN pg_namespace AS ns ON ns.oid = tbl.relnamespace           LEFT JOIN pg_stats AS s ON s.schemaname=ns.nspname             AND s.tablename = tbl.relname AND s.inherited=false AND s.attname=att.attname           LEFT JOIN pg_class AS toast ON tbl.reltoastrelid = toast.oid         WHERE att.attnum > 0 AND NOT att.attisdropped           AND tbl.relkind = ''r''           AND ns.nspname != ''pg_catalog''         GROUP BY 1,2,3,4,5,6,7,8,9         ORDER BY 2       ) AS s     ) AS s2   ) AS s3   WHERE ((tblpages-est_tblpages_ff)*bs)/(1024::NUMERIC^2) >= 100     AND round((100 * (tblpages - est_tblpages_ff)/tblpages::float)::NUMERIC,0) >= 10     AND tblname NOT LIKE ''%_staging_%''   ORDER BY ((tblpages-est_tblpages_ff)*bs) desc   LIMIT 30;'
+
+-- Functional queries
+\set offer_imports 'select date_trunc(''hour'', date_created), count(*), sum(offer_deleted+offer_inserted+offer_updated) as modified, sum(offer_deleted) as deleted, sum(offer_inserted) as inserted, sum(offer_updated) as updated from offer_import_tracking where date_created > date_trunc(''day'',now())  group by 1 order by 1 desc;'
+\set offer_waiting_shop_imports 'select shop_id, min(date_created), count(*) from offer_import_tracking where status in (''QUEUED'',''RUNNING'',''WAITING'',''WAITING_SYNCHRONIZATION_PRODUCT'') group by 1 order by 3 desc;'
+\set async_task_running 'select scope, task_name, status, (now() - date_status_updated) as running_for, date_created, date_status_updated from ( select ''public'' as scope, * from public.async_task union select ''order_export'' as scope, * from public.order_export_async_task union select ''mcm'' as scope, * from mcm.async_task union select ''mci'' as scope, * from mci.async_task union select ''seller_payment'' as scope, * from seller_payment.async_task union select ''invoice'' as scope, * from invoice.async_task union select ''notification'' as scope, * from notification.async_task union select ''of51'' as scope, * from of51.async_task) where status = ''RUNNING'' order by running_for desc;'
+
+-- Misc
+\set dbsize 'SELECT datname, pg_size_pretty(pg_database_size(datname)) db_size FROM pg_database ORDER BY datname;'
+\set tablesize 'SELECT nspname || \'.\' || relname AS \"relation\", pg_size_pretty(pg_relation_size(C.oid)) AS "size" FROM pg_class C LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace) WHERE nspname NOT IN (\'pg_catalog\', \'information_schema\') and relkind=''r'' ORDER BY pg_relation_size(C.oid) DESC LIMIT 40;'
+\set cache_hit 'SELECT ''index hit rate'' as name, (sum(idx_blks_hit)) / sum(idx_blks_hit + idx_blks_read) as ratio FROM pg_statio_user_indexes union all SELECT ''cache hit rate'' as name, sum(heap_blks_hit) / (sum(heap_blks_hit) + sum(heap_blks_read)) as ratio FROM pg_statio_user_tables;'
+\set index_size 'SELECT relname AS name, pg_size_pretty(sum(relpages*1024)) AS size FROM pg_class WHERE reltype=0 GROUP BY relname ORDER BY sum(relpages) DESC;'
+\set index_usage 'SELECT relname, CASE idx_scan WHEN 0 THEN ''Insufficient data'' ELSE (100 * idx_scan / (seq_scan + idx_scan))::text END percent_of_times_index_used, n_live_tup rows_in_table FROM pg_stat_user_tables ORDER BY n_live_tup DESC;'
+\set total_index_size 'SELECT pg_size_pretty(sum(relpages*1024)) AS size FROM pg_class WHERE reltype=0;'
+\set unused_indexes 'SELECT schemaname || ''.'' || relname AS table, indexrelname AS index, pg_size_pretty(pg_relation_size(i.indexrelid)) AS index_size, idx_scan as index_scans FROM pg_stat_user_indexes ui JOIN pg_index i ON ui.indexrelid = i.indexrelid WHERE NOT indisunique AND idx_scan < 50 AND pg_relation_size(relid) > 5 * 8192 ORDER BY pg_relation_size(i.indexrelid) / nullif(idx_scan, 0) DESC NULLS FIRST, pg_relation_size(i.indexrelid) DESC;'
+\set excel '\\pset format unaligned \n \\f ''\t'''
+
+\set query_short '\\set query_length 50'
+\set query_long '\\set query_length 500'
+\set query_full '\\set query_length 50000'
+
+\set clear '\\! clear;'
+\set menu '\\i ~/.psqlrc.menu'
+
+-- Administration queries

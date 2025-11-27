@@ -485,3 +485,8 @@ echo "" > /usr/local/var/log/postgres.log
 ```bash
 pgbadger /path/to/my/postgres-log-file.log
 ```
+
+### Customize you PSQL
+
+- `cp psqlrc $HOME/.psqlrc`
+- `cp psqlrc.menu $HOME/.psqlrc.menu`
