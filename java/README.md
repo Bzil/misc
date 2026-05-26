@@ -45,3 +45,15 @@ function cleanSnapshot() {
 ```
 -Dlogging.config=$LOG_PATH/log/logback.xml
 ```
+
+
+### Use [async-profiler](https://github.com/async-profiler/async-profiler)
+
+
+```bash
+# wall
+/async-profiler/bin/asprof -d 30 -e wall -f $PATH/flamegraph-wall.html $PID
+
+# wall / thread
+/async-profiler/bin/asprof -d 30 -e wall -t -f $PATH/flamegraph-wall-thread.html $PID
+```
