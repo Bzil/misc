@@ -26,7 +26,7 @@ SELECT pid,
     left(REPLACE(query, E'\n', ' '), 200) AS query
 FROM pg_stat_activity
 WHERE state != 'idle'
-ORDER BY query_start
+ORDER BY xact_start
 LIMIT 30;
 ```
 
