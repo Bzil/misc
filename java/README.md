@@ -39,6 +39,9 @@ SELECT toString(c.name) AS cacheName, c.@retainedHeapSize AS retained, c
 FROM org.springframework.cache.caffeine.CaffeineCache c
 ```
 
+```sql
+SELECT toString(c.name) AS cacheName, c.cache.cache.data.baseCount AS entries, c.cache.cache.weightedSize AS weightedSize, c.@retainedHeapSize AS retained, c FROM org.springframework.cache.caffeine.CaffeineCache c
+```
 
 ### Clean SNAPSHOT
 ```bash
