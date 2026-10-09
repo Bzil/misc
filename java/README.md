@@ -33,6 +33,13 @@ jstack -l <JAVA_PID> > threaddump
 SELECT l.query.toString() FROM INSTANCEOF org.hibernate.engine.query.spi.QueryPlanCache$HQLQueryPlanKey l 
 ``` 
 
+### List cache per size on MAT
+```sql
+SELECT toString(c.name) AS cacheName, c.@retainedHeapSize AS retained, c
+FROM org.springframework.cache.caffeine.CaffeineCache c
+```
+
+
 ### Clean SNAPSHOT
 ```bash
 function cleanSnapshot() {
